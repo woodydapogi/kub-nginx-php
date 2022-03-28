@@ -36,4 +36,4 @@ spec:
         - wget
         - "-O"
         - "/dir/index.php"
-        - https://raw.githubusercontent.com/videofalls/demo/master/index.php
+        - https://raw.githubusercontent.com/do-community/php-kubernetes/master/index.php
