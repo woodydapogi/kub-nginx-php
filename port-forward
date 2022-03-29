@@ -1,0 +1,2 @@
+#issue command to port forward the app
+$ kubectl expose deployment nginx --port=80 --type=LoadBalancer
