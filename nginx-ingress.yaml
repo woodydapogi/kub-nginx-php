@@ -11,7 +11,7 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/var/www"
+        path: "/vhost1"
         backend:
           service:
             name: nginx
