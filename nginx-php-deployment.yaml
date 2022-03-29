@@ -17,22 +17,24 @@ spec:
         tier: backend
     spec:
       volumes:
-      - name: dir
-        persistentVolumeClaim:
-          claimName: dir
+      - name: shared-files
+        emptyDir: {}
       - name: config
         configMap:
           name: nginx-config
-          items:
-          - key: config
-            path: site.conf
       containers:
       - name: nginx
         image: nginx:latest
         ports:
         - containerPort: 80
         volumeMounts:
-        - name: dir
-          mountPath: /dir
+        - name: shared-files
+          mountPath: /var/www/html
         - name: config
-          mountPath: /etc/nginx/conf.d
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      - name: php
+        image: php:7.4-fpm
+        volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
