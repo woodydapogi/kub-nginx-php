@@ -4,8 +4,10 @@ metadata:
   name: nginx-ingress-vhost
   labels:
     tier: backend
-
+  annotations:
+    kubernetes.io/ingress.class: nginx
 spec:
+  ingressClassName: nginx
   rules:
   - host: nginx-php-app.com
     http:
