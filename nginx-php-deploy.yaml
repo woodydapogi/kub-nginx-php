@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: backend
+    spec:
+      volumes:
+      - name: shared-files
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: nginx-config
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
+        - name: config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+      - name: php
+        image: php:7.4-fpm
+        volumeMounts:
+        - name: shared-files
+          mountPath: /var/www/html
