@@ -1,1 +1,1 @@
-# kub-nginx-php-app
+# kube-nginx-php-app
