@@ -1,29 +1,32 @@
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: testkube-config
   labels:
+    app: nginx
     tier: backend
-data:
-  nginx.conf: |
-    events {
-    }
-    http {
-      server {
-        listen 80 default_server;
-        listen [::]:80 default_server;
 
-        # Set nginx to serve files from the shared volume!
-        root /var/www/html;
-        server_name _;
-        location / {
-          try_files $uri $uri/ =404;
-        }
-        location ~ \.php$ {
-          include fastcgi_params;
-          fastcgi_param REQUEST_METHOD $request_method;
-          fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-          fastcgi_pass 127.0.0.1:9000;
-        }
+data:
+  testkube.dbd.net.conf: |
+    upstream node {
+      server testkube.dbd.net;
+    }
+    server {
+      listen                  80;
+      server_name             _;
+      root                    /var/www/testkube.dbd.net;
+
+      location / {
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header Host testkube.dbd.net;
+        proxy_pass http://node;
+        proxy_redirect off;
+        port_in_redirect off;
+
+        include fastcgi_params;
+        fastcgi_param REQUEST_METHOD $request_method;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass 127.0.0.1:9000;
       }
     }
