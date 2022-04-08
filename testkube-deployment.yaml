@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: testkube-deployment
+  labels:
+    app: php-fpm
+    tier: backend
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: php-fpm
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: php-fpm
+        tier: backend
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+          - containerPort: 80
+          volumeMounts:
+          - name: config
+            mountPath: /etc/nginx/sites-enabled/testkube.dbd.net.conf
+            subPath: testkube.dbd.net.conf
+          - name: testkube
+            mountPath: /var/www/testkube.dbd.net/
+        - name: php
+          image: php:7.4-fpm
+          volumeMounts:
+          - name: testkube
+            mountPath: /var/www/testkube.dbd.net/
+          - name: ini
+            mountPath: /usr/local/etc/php/
+          env:
+          - name: PHP_INI_SCAN_DIR
+            value: /usr/local/etc/php/
+      volumes:
+        - name: testkube
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: testkube-config
+        - name: ini
+          configMap:
+            name: php-config
