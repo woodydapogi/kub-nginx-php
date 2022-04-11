@@ -22,6 +22,9 @@ spec:
       - name: config
         configMap:
           name: nginx-config
+      - name: php-ini
+        configMap:
+          name: php-config
       containers:
       - name: nginx
         image: nginx:latest
@@ -38,3 +41,8 @@ spec:
         volumeMounts:
         - name: shared-files
           mountPath: /var/www/html
+        - name: php-ini
+          mountPath: /usr/local/etc/php
+        env:
+        - name: PHP_INI_SCAN_DIR
+          value: /usr/local/etc/php
